@@ -59,6 +59,7 @@ const salvarAluno = () => {
 
     limparFormulario();
     renderizarTabela();
+    atualizarTodosRelatorios();
 };
 
 const editarAluno = (index) => {
@@ -90,13 +91,13 @@ const excluirAluno = (index) => {
     }
 
     renderizarTabela();
+    atualizarTodosRelatorios();
 };
 
 const renderizarTabela = () => {
     const tbody = document.getElementById('tabela-corpo');
     tbody.innerHTML = '';
 
-    // Uso de arrow function na iteração dos dados
     alunos.forEach((aluno, index) => {
         const tr = document.createElement('tr');
 
@@ -112,7 +113,6 @@ const renderizarTabela = () => {
             </td>
         `;
 
-        // Escutadores de eventos nos botões da tabela usando funções anônimas
         const btnEditar = tr.querySelector('.btn-editar');
         const btnExcluir = tr.querySelector('.btn-excluir');
 
@@ -128,11 +128,111 @@ const renderizarTabela = () => {
     });
 };
 
-// Escutadores de eventos do formulário com funções anônimas
+// --- Funções de Relatórios (Exercício 4) ---
+
+// 1. Listar alunos aprovados (filter + map)
+const obterRelatorioAprovados = () => {
+    const aprovados = alunos
+        .filter(aluno => aluno.isAprovado())
+        .map(aluno => `${aluno.nome} (Nota: ${aluno.notaFinal})`);
+
+    return aprovados.length > 0
+        ? `<strong>Alunos Aprovados (Nota >= 7):</strong> ${aprovados.join(', ')}`
+        : '<strong>Alunos Aprovados (Nota >= 7):</strong> Nenhum aluno aprovado.';
+};
+
+// 2. Calcular média das notas finais (reduce)
+const obterRelatorioMediaNotas = () => {
+    if (alunos.length === 0) return '<strong>Média das Notas Finais:</strong> 0.00';
+    const somaNotas = alunos.reduce((acc, aluno) => acc + aluno.notaFinal, 0);
+    const media = (somaNotas / alunos.length).toFixed(2);
+    return `<strong>Média das Notas Finais:</strong> ${media}`;
+};
+
+// 3. Calcular média das idades (reduce)
+const obterRelatorioMediaIdades = () => {
+    if (alunos.length === 0) return '<strong>Média das Idades:</strong> 0.0';
+    const somaIdades = alunos.reduce((acc, aluno) => acc + aluno.idade, 0);
+    const media = (somaIdades / alunos.length).toFixed(1);
+    return `<strong>Média das Idades:</strong> ${media} anos`;
+};
+
+// 4. Listar nomes dos alunos em ordem alfabética (map + sort)
+const obterRelatorioOrdemAlfabetica = () => {
+    if (alunos.length === 0) return '<strong>Alunos em Ordem Alfabética:</strong> Nenhum aluno cadastrado.';
+    const nomesOrdenados = alunos
+        .map(aluno => aluno.nome)
+        .sort((a, b) => a.localeCompare(b));
+    return `<strong>Alunos em Ordem Alfabética:</strong> ${nomesOrdenados.join(', ')}`;
+};
+
+// 5. Mostrar quantidade de alunos por curso (reduce + forEach)
+const obterRelatorioQtdPorCurso = () => {
+    const contagemInicial = { JavaScript: 0, Python: 0, Java: 0 };
+    const contagemPorCurso = alunos.reduce((acc, aluno) => {
+        acc[aluno.curso] = (acc[aluno.curso] || 0) + 1;
+        return acc;
+    }, contagemInicial);
+
+    const itens = [];
+    Object.keys(contagemPorCurso).forEach(curso => {
+        itens.push(`${curso}: ${contagemPorCurso[curso]}`);
+    });
+
+    return `<strong>Quantidade de Alunos por Curso:</strong> ${itens.join(' | ')}`;
+};
+
+// Exibição individual ou completa no DOM
+const exibirRelatorio = (conteudoHtml) => {
+    document.getElementById('resultado-relatorios').innerHTML = `<p>${conteudoHtml}</p>`;
+};
+
+const atualizarTodosRelatorios = () => {
+    const container = document.getElementById('resultado-relatorios');
+    if (alunos.length === 0) {
+        container.innerHTML = '<p>Nenhum aluno cadastrado para gerar relatórios.</p>';
+        return;
+    }
+
+    container.innerHTML = `
+        <p>${obterRelatorioAprovados()}</p>
+        <p>${obterRelatorioMediaNotas()}</p>
+        <p>${obterRelatorioMediaIdades()}</p>
+        <p>${obterRelatorioOrdemAlfabetica()}</p>
+        <p>${obterRelatorioQtdPorCurso()}</p>
+    `;
+};
+
+// Escutadores de eventos do formulário
 document.getElementById('form-aluno').addEventListener('submit', function (event) {
     event.preventDefault();
 });
 
 document.getElementById('btn-salvar').addEventListener('click', function () {
     salvarAluno();
+});
+
+// Escutadores de eventos dos botões de relatórios
+document.getElementById('btn-rel-aprovados').addEventListener('click', function () {
+    exibirRelatorio(obterRelatorioAprovados());
+});
+
+document.getElementById('btn-rel-media-notas').addEventListener('click', function () {
+    exibirRelatorio(obterRelatorioMediaNotas());
+});
+
+document.getElementById('btn-rel-media-idades').addEventListener('click', function () {
+    exibirRelatorio(obterRelatorioMediaIdades());
+});
+
+document.getElementById('btn-rel-ordem-alfabetica').addEventListener('click', function () {
+    exibirRelatorio(obterRelatorioOrdemAlfabetica());
+});
+
+document.getElementById('btn-rel-qtd-curso').addEventListener('click', function () {
+    exibirRelatorio(obterRelatorioQtdPorCurso());
+});
+
+document.getElementById('btn-rel-todos').addEventListener('click', function () {
+    atualizarTodosRelatorios();
 });
