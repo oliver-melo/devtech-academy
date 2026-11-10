@@ -1,4 +1,22 @@
-// Armazenamento em memória (array de objetos)
+class Aluno {
+    constructor(nome, idade, curso, notaFinal) {
+        this.nome = nome;
+        this.idade = Number(idade);
+        this.curso = curso;
+        this.notaFinal = Number(notaFinal);
+    }
+
+    isAprovado() {
+        return this.notaFinal >= 7;
+    }
+
+    toString() {
+        const status = this.isAprovado() ? 'Aprovado' : 'Reprovado';
+        return `Aluno: ${this.nome} | Idade: ${this.idade} | Curso: ${this.curso} | Nota: ${this.notaFinal} (${status})`;
+    }
+}
+
+// Armazenamento em memória (array de instâncias de Aluno)
 let alunos = [];
 let indiceEdicao = null;
 
@@ -9,28 +27,23 @@ function salvarAluno() {
     const notaFinalInput = document.getElementById('notaFinal');
 
     const nome = nomeInput.value.trim();
-    const idade = Number(idadeInput.value);
+    const idade = idadeInput.value;
     const curso = cursoInput.value;
-    const notaFinal = Number(notaFinalInput.value);
+    const notaFinal = notaFinalInput.value;
 
-    if (!nome || !idadeInput.value || !curso || !notaFinalInput.value) {
+    if (!nome || !idade || !curso || !notaFinal) {
         alert('Preencha todos os campos!');
         return;
     }
 
-    const alunoObj = {
-        nome: nome,
-        idade: idade,
-        curso: curso,
-        notaFinal: notaFinal
-    };
+    // Instanciando a classe Aluno
+    const novoAluno = new Aluno(nome, idade, curso, notaFinal);
+    console.log(novoAluno.toString());
 
     if (indiceEdicao === null) {
-        // Cadastrar novo aluno
-        alunos.push(alunoObj);
+        alunos.push(novoAluno);
     } else {
-        // Atualizar aluno existente
-        alunos[indiceEdicao] = alunoObj;
+        alunos[indiceEdicao] = novoAluno;
         indiceEdicao = null;
         document.getElementById('btn-salvar').innerText = 'Cadastrar';
     }
@@ -52,6 +65,7 @@ function renderizarTabela() {
             <td>${aluno.idade}</td>
             <td>${aluno.curso}</td>
             <td>${aluno.notaFinal}</td>
+            <td>${aluno.isAprovado() ? 'Aprovado' : 'Reprovado'}</td>
             <td>
                 <button type="button" onclick="editarAluno(${i})">Editar</button>
                 <button type="button" onclick="excluirAluno(${i})">Excluir</button>
@@ -77,7 +91,6 @@ function editarAluno(index) {
 function excluirAluno(index) {
     alunos.splice(index, 1);
 
-    // Se excluir o registro que estava sendo editado, reseta o formulário
     if (indiceEdicao === index) {
         limparFormulario();
         indiceEdicao = null;
