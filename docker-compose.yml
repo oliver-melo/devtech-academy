@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    container_name: devtech-crud
+    ports:
+      - "8080:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./app.js:/usr/share/nginx/html/app.js:ro
