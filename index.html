@@ -7,7 +7,7 @@
 <body>
     <h1>DevTech Academy - Cadastro de Alunos</h1>
 
-    <form id="form-aluno" onsubmit="event.preventDefault();">
+    <form id="form-aluno">
         <div>
             <label for="nome">Nome:</label>
             <input type="text" id="nome" required>
@@ -33,12 +33,12 @@
             <input type="number" id="notaFinal" step="0.1" min="0" max="10" required>
         </div>
         <br>
-        <button type="button" id="btn-salvar" onclick="salvarAluno()">Cadastrar</button>
+        <button type="button" id="btn-salvar">Cadastrar</button>
     </form>
 
     <hr>
 
-	 <h2>Lista de Alunos</h2>
+    <h2>Lista de Alunos</h2>
     <table border="1" cellpadding="5" cellspacing="0">
         <thead>
             <tr>
@@ -52,9 +52,8 @@
         </thead>
         <tbody id="tabela-corpo">
         </tbody>
-    </table>    
+    </table>
 
-	<script src="app.js"></script>
-
+    <script src="app.js"></script>
 </body>
 </html>
