@@ -53,7 +53,7 @@ const salvarAluno = () => {
 	const regexNomeValido = /^[a-zA-Z\s]+$/
 
     if (!regexNomeValido.test(nome)) {
-        alert('Apenas letras e espaço são permitidas no nome!');
+        alert('Apenas letras sem acento e espaço são permitidas no nome!');
         return;
     }
 
