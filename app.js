@@ -27,6 +27,13 @@ const limparFormulario = () => {
     document.getElementById('notaFinal').value = '';
 };
 
+const resetarBotaoSalvar = () => {
+    const btnSalvar = document.getElementById('btn-salvar');
+    btnSalvar.innerText = 'Cadastrar';
+    btnSalvar.classList.remove('btn-warning');
+    btnSalvar.classList.add('btn-primary');
+};
+
 const salvarAluno = () => {
     const nomeInput = document.getElementById('nome');
     const idadeInput = document.getElementById('idade');
@@ -43,6 +50,23 @@ const salvarAluno = () => {
         return;
     }
 
+	const regexNomeValido = /^[a-zA-Z\s]+$/
+
+    if (!regexNomeValido.test(nome)) {
+        alert('Apenas letras e espaço são permitidas no nome!');
+        return;
+    }
+
+	if (Number(idade) < 7 || Number(idade) > 125){
+		alert('Idade apenas entre 7 e 125!');
+        return;
+    }
+
+	if (Number(notaFinal) < 0 || Number(notaFinal) > 10){
+		alert('Nota apenas entre 0 e 10!');
+        return;
+    }
+
     const novoAluno = new Aluno(nome, idade, curso, notaFinal);
 
     if (indiceEdicao === null) {
@@ -54,7 +78,7 @@ const salvarAluno = () => {
         console.log(`Editado (índice ${indiceEdicao}) -> ${novoAluno.toString()}`);
         alert(`Dados do aluno "${novoAluno.nome}" atualizados com sucesso!`);
         indiceEdicao = null;
-        document.getElementById('btn-salvar').innerText = 'Cadastrar';
+        resetarBotaoSalvar();
     }
 
     limparFormulario();
@@ -71,7 +95,11 @@ const editarAluno = (index) => {
     document.getElementById('notaFinal').value = aluno.notaFinal;
 
     indiceEdicao = index;
-    document.getElementById('btn-salvar').innerText = 'Atualizar';
+    const btnSalvar = document.getElementById('btn-salvar');
+    btnSalvar.innerText = 'Atualizar';
+    btnSalvar.classList.remove('btn-primary');
+    btnSalvar.classList.add('btn-warning');
+
     console.log(`Modo de edição ativado para -> ${aluno.toString()}`);
 };
 
@@ -85,7 +113,7 @@ const excluirAluno = (index) => {
     if (indiceEdicao === index) {
         limparFormulario();
         indiceEdicao = null;
-        document.getElementById('btn-salvar').innerText = 'Cadastrar';
+        resetarBotaoSalvar();
     } else if (indiceEdicao !== null && index < indiceEdicao) {
         indiceEdicao--;
     }
@@ -100,16 +128,19 @@ const renderizarTabela = () => {
 
     alunos.forEach((aluno, index) => {
         const tr = document.createElement('tr');
+        const badgeSituacao = aluno.isAprovado()
+            ? '<span class="badge bg-success">Aprovado</span>'
+            : '<span class="badge bg-danger">Reprovado</span>';
 
         tr.innerHTML = `
             <td>${aluno.nome}</td>
             <td>${aluno.idade}</td>
             <td>${aluno.curso}</td>
             <td>${aluno.notaFinal}</td>
-            <td>${aluno.isAprovado() ? 'Aprovado' : 'Reprovado'}</td>
-            <td>
-                <button type="button" class="btn-editar">Editar</button>
-                <button type="button" class="btn-excluir">Excluir</button>
+            <td>${badgeSituacao}</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-warning btn-sm btn-editar me-1">Editar</button>
+                <button type="button" class="btn btn-danger btn-sm btn-excluir">Excluir</button>
             </td>
         `;
 
@@ -184,22 +215,22 @@ const obterRelatorioQtdPorCurso = () => {
 
 // Exibição individual ou completa no DOM
 const exibirRelatorio = (conteudoHtml) => {
-    document.getElementById('resultado-relatorios').innerHTML = `<p>${conteudoHtml}</p>`;
+    document.getElementById('resultado-relatorios').innerHTML = `<p class="mb-0">${conteudoHtml}</p>`;
 };
 
 const atualizarTodosRelatorios = () => {
     const container = document.getElementById('resultado-relatorios');
     if (alunos.length === 0) {
-        container.innerHTML = '<p>Nenhum aluno cadastrado para gerar relatórios.</p>';
+        container.innerHTML = '<p class="mb-0 text-muted">Nenhum aluno cadastrado para gerar relatórios.</p>';
         return;
     }
 
     container.innerHTML = `
-        <p>${obterRelatorioAprovados()}</p>
-        <p>${obterRelatorioMediaNotas()}</p>
-        <p>${obterRelatorioMediaIdades()}</p>
-        <p>${obterRelatorioOrdemAlfabetica()}</p>
-        <p>${obterRelatorioQtdPorCurso()}</p>
+        <p class="mb-1">${obterRelatorioAprovados()}</p>
+        <p class="mb-1">${obterRelatorioMediaNotas()}</p>
+        <p class="mb-1">${obterRelatorioMediaIdades()}</p>
+        <p class="mb-1">${obterRelatorioOrdemAlfabetica()}</p>
+        <p class="mb-0">${obterRelatorioQtdPorCurso()}</p>
     `;
 };
 
