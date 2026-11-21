@@ -53,7 +53,7 @@ const salvarAluno = () => {
 	const regexNomeValido = /^[a-zA-Z\s]+$/
 
     if (!regexNomeValido.test(nome)) {
-        alert('Apenas letras sem acento e espaço são permitidas no nome!');
+        alert('Apenas letras e espaço são permitidas no nome!');
         return;
     }
 
@@ -62,7 +62,7 @@ const salvarAluno = () => {
         return;
     }
 
-	if (Number(notaFinal) < 0 || Number(notaFinal) > 10){
+	if (Number(notaFinal) < 0 <= Number(notaFinal) > 10){
 		alert('Nota apenas entre 0 e 10!');
         return;
     }
@@ -139,8 +139,12 @@ const renderizarTabela = () => {
             <td>${aluno.notaFinal}</td>
             <td>${badgeSituacao}</td>
             <td class="text-center">
-                <button type="button" class="btn btn-warning btn-sm btn-editar me-1">Editar</button>
-                <button type="button" class="btn btn-danger btn-sm btn-excluir">Excluir</button>
+				<div class="d-flex flex-wrap gap-2 mb-3">
+					<button type="button" class="btn btn-warning btn-sm btn-editar me-1">Editar</button>
+				</div>
+				<div class="d-flex flex-wrap gap-2 mb-3">
+					<button type="button" class="btn btn-danger btn-sm btn-excluir">Excluir</button>
+				</div>
             </td>
         `;
 
